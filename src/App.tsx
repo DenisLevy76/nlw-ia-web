@@ -1,4 +1,4 @@
-import { FileVideo, Github, Upload, Wand2 } from 'lucide-react'
+import { Wand2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
@@ -7,33 +7,19 @@ import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from './components/ui/select'
 import { Slider } from './components/ui/slider'
+import { VideoInputForm } from './components/VideoInputForm'
+import { Header } from './components/Header'
 
 export const App = () => {
   return (
     <div className='flex flex-col min-h-screen leading-relaxed'>
-      <header className='py-4 px-8 flex justify-between border-b'>
-        <h2 className='text-xl font-bold'>upload.ai</h2>
-        <div className='flex gap-4 justify-center items-center'>
-          <p className='text-muted-foreground'>
-            Desenvolvido com ❤️ no NLW da Rocketseat
-          </p>
-          <Separator
-            orientation='vertical'
-            className='h-6'
-          />
-          <Button variant='outline'>
-            <Github />
-            Github
-          </Button>
-        </div>
-      </header>
+      <Header />
+
       <main className='flex flex-1 gap-6 py-4 px-8'>
         <section className='flex flex-1 flex-col gap-4'>
           <Textarea
@@ -45,7 +31,7 @@ export const App = () => {
             placeholder='Resultado gerado pela IA.'
             readOnly
           />
-          <p className='text-muted-foreground text-sm mt-4'>
+          <p className='text-muted-foreground text-sm'>
             lembre-se: você pode utilizar a variável{' '}
             <code className='text-violet-400'>{'{transcription}'}</code> no seu
             prompt para adicionar o conteúdo da transcrição do vídeo
@@ -53,47 +39,11 @@ export const App = () => {
           </p>
         </section>
         <aside className='flex-1 max-w-md'>
-          <form>
-            <Label
-              htmlFor='video'
-              className='border w-full aspect-video flex rounded-md cursor-pointer border-dashed text-muted-foreground flex-col gap-2 items-center justify-center hover:bg-primary/5'
-            >
-              <FileVideo />
-              Carregar vídeo
-            </Label>
-            <input
-              type='file'
-              name='video'
-              id='video'
-              accept='video/mp4'
-              className='sr-only'
-            />
-            <Separator className='my-6' />
-            <Label
-              htmlFor='prompt-transcription'
-              className='flex mb-4'
-            >
-              Prompt de transcrição
-            </Label>
-            <Textarea
-              id='prompt-transcription'
-              placeholder='Ex.: ESlint, Tailwind, Reactjs, Typescript'
-            />
+          <VideoInputForm />
 
-            <Button
-              className='w-full mt-4'
-              type='submit'
-            >
-              Carregar vídeo
-              <Upload
-                className='ml-2'
-                size={16}
-              />
-            </Button>
-          </form>
+          <Separator className='my-6' />
 
           <form>
-            <Separator className='my-6' />
             <Label
               htmlFor='prompt'
               className='flex mb-3'
