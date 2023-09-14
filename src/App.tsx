@@ -4,18 +4,34 @@ import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from './components/ui/select'
 import { Slider } from './components/ui/slider'
 import { VideoInputForm } from './components/VideoInputForm'
 import { Header } from './components/Header'
+import { PromptSelector } from './components/PromptSelector'
+import { useState } from 'react'
+import { useCompletion } from 'ai/react'
 
 export const App = () => {
+  const [temperature, setTemperature] = useState<number>(0.5)
+
+  const {
+    input,
+    completion,
+    isLoading,
+    setInput,
+    handleInputChange,
+    handleSubmit,
+  } = useCompletion({
+    api: 'http://localhost:3333/complete',
+    body: {
+      videoId: 'Colocar o ID do vídeo aqui',
+      temperature,
+    },
+    headers: {
+      'Content-type': 'application/json',
+    },
+  })
+
   return (
     <div className='flex flex-col min-h-screen leading-relaxed'>
       <Header />
@@ -25,11 +41,14 @@ export const App = () => {
           <Textarea
             className='resize-none flex-1'
             placeholder='Inclua o prompt para a IA...'
+            value={input}
+            onChange={handleInputChange}
           />
           <Textarea
             className='resize-none flex-1'
             placeholder='Resultado gerado pela IA.'
             readOnly
+            value={completion}
           />
           <p className='text-muted-foreground text-sm'>
             lembre-se: você pode utilizar a variável{' '}
@@ -43,46 +62,21 @@ export const App = () => {
 
           <Separator className='my-6' />
 
-          <form>
+          <form onSubmit={handleSubmit}>
             <Label
               htmlFor='prompt'
               className='flex mb-3'
             >
               Prompt
             </Label>
-            <Select>
-              <SelectTrigger
-                className='w-full'
-                id='prompt'
-              >
-                <SelectValue placeholder='Selecione um prompt' />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='title'>Titulo para o Youtube</SelectItem>
-                <SelectItem value='description'>
-                  Descrição para o Youtube
-                </SelectItem>
-              </SelectContent>
-            </Select>
+
             <Label
               htmlFor='model'
               className='flex mb-3 mt-6'
             >
               Model
             </Label>
-            <Select>
-              <SelectTrigger
-                className='w-full'
-                id='model'
-                defaultValue={'gpt3.5'}
-                disabled
-              >
-                <SelectValue placeholder='Selecione o motor GPT' />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='gpt3.5'>GPT 3.5-turbo 16k</SelectItem>
-              </SelectContent>
-            </Select>
+            <PromptSelector onPromptSelected={setInput} />
             <p className='text-muted-foreground text-sm mt-2 italic'>
               Você poderá customizar esta opção em breve.
             </p>
@@ -99,12 +93,16 @@ export const App = () => {
               >
                 Temperatura
               </Label>
-              <p className='text-muted-foreground text-sm mt-4'>0.5</p>
+              <p className='text-muted-foreground text-sm mt-4'>
+                {temperature}
+              </p>
             </span>
             <Slider
               step={0.1}
               max={1}
               min={0}
+              value={[temperature]}
+              onValueChange={(value) => setTemperature(value[0])}
             />
             <p className='text-muted-foreground text-sm mt-4 italic'>
               Valores mais altos tendem a deixar o resultado mais criativo e com
@@ -119,6 +117,7 @@ export const App = () => {
             <Button
               className='w-full'
               type='submit'
+              disabled={isLoading}
             >
               Executar{' '}
               <Wand2
